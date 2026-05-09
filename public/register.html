@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link rel="stylesheet" href="register.css">
+</head>
+
+<body>
+
+<header class="cuny-header">
+    <img src="cuny-logo.webp" alt="CUNY Logo" class="cuny-logo-img" />
+</header>
+
+<div class="container">
+
+    <h2 class="form-title">Enter Personal Information</h2>
+
+    <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input id="fullName" type="text" placeholder="John Doe">
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email Address</label>
+        <input id="email" type="email" placeholder="example@domain.com">
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Enter a strong password">
+    </div>
+
+    <div class="form-group">
+        <label for="phone">Phone Number (WhatsApp)</label>
+        <input id="phone" type="text" placeholder="+18443512074">
+    </div>
+
+    <div class="form-group">
+        <label>Context‑Aware MFA</label>
+        <button type="button" id="mfaToggle" class="toggle-btn toggle-on">
+            Context‑Aware MFA: ON
+        </button>
+        <input type="hidden" id="mfaEnabled" value="true">
+    </div>
+
+    <button class="submit-btn" onclick="registerUser()">Continue</button>
+
+    <div id="msg" class="msg"></div>
+
+    <div class="footer-link">
+        <a href="index.html">Already have an account? Login</a>
+    </div>
+
+</div>
+
+<script>
+/* ------------------ MFA TOGGLE ------------------ */
+let mfaState = true;
+
+document.getElementById("mfaToggle").onclick = () => {
+    mfaState = !mfaState;
+
+    const btn = document.getElementById("mfaToggle");
+    const hidden = document.getElementById("mfaEnabled");
+
+    if (mfaState) {
+        btn.className = "toggle-btn toggle-on";
+        btn.innerText = "Context‑Aware MFA: ON";
+        hidden.value = "true";
+    } else {
+        btn.className = "toggle-btn toggle-off";
+        btn.innerText = "Context‑Aware MFA: OFF";
+        hidden.value = "false";
+    }
+};
+
+/* ------------------ REGISTER USER ------------------ */
+async function registerUser() {
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const mfaEnabled = document.getElementById("mfaEnabled").value === "true";
+
+    const msg = document.getElementById("msg");
+    msg.innerText = "";
+    msg.style.color = "red";
+
+    if (!fullName || !email || !password || !phone) {
+        msg.innerText = "Please fill out all required fields.";
+        return;
+    }
+
+    if (!phone.startsWith("+")) {
+        msg.innerText = "Phone number must be in international format (e.g., +18443512074).";
+        return;
+    }
+
+    const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            fullName,
+            email,
+            password,
+            phone,
+            mfaEnabled
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.status === "ok") {
+        msg.style.color = "green";
+        msg.innerText = "Account created successfully! Redirecting…";
+        setTimeout(() => window.location.href = "index.html", 1200);
+    } else {
+        msg.innerText = data.message || "Registration failed.";
+    }
+}
+</script>
+
+</body>
+</html>

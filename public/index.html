@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CUNY Login</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Font  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="login-page">
+
+  <!-- BLUE HEADER Cuny LOGO -->
+  <header class="cuny-header">
+    <img src="cuny-logo.webp" alt="CUNY Logo" class="cuny-logo-img" />
+  </header>
+
+  <!-- Login Box -->
+  <main class="login-wrapper">
+    <div class="login-box">
+
+      <form id="login-form" onsubmit="event.preventDefault(); loginUser();">
+        <label class="field-label black-title">CUNY Login</label>
+        <input id="email" name="email" class="field-input" type="text" required />
+
+        <label class="field-label black-title">Password</label>
+        <input id="password" name="password" class="field-input" type="password" required />
+
+        <button id="loginBtn" class="login-btn" type="submit">Log in</button>
+      </form>
+
+      <p class="security-note">
+        For your security, be sure to log out and close your browser when done.
+      </p>
+
+      <div class="account-box">
+        <div class="section-title black-title">CUNY LOGIN ACCOUNT MANAGEMENT</div>
+
+        <div class="link-group center-links">
+          <a href="register.html">New User</a>
+          <a href="forgot-username.html">Forgot Username</a>
+          <a href="forgot-password.html">Forgot Password</a>
+          <a href="settings.html">Manage Settings</a>
+        </div>
+
+        <!-- SUPPORT -->
+        <div class="section-title black-title">SUPPORT</div>
+        <div class="link-group center-links">
+          <a href="#">FAQs</a>
+          <a href="#">Service Alerts</a>
+          <a href="#">Get Help</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="link-group cuny-footer">
+    <div class="link-group footer-links">
+      <a href="#">Copyright 2025</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Security</a>
+      <a href="#">Accessibility</a>
+      <a href="#">CUNY IT Help</a>
+    </div>
+
+    <div class="footer-social">
+      <i class="fab fa-facebook-f"></i>
+      <i class="fab fa-instagram"></i>
+      <i class="fab fa-youtube"></i>
+      <i class="fab fa-linkedin-in"></i>
+      <i class="fas fa-ellipsis-h"></i>
+    </div>
+  </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+
+<script>
+  let fingerprintId = null;
+  let locationData = null;
+  let signalsReady = false;
+
+  const btn = document.getElementById("loginBtn");
+
+  // Disable login button until signals load
+  btn.disabled = true;
+  btn.innerText = "Loading signals…";
+
+  /* ------------------ LOAD FINGERPRINT ------------------ */
+  FingerprintJS.load()
+    .then(fp => fp.get())
+    .then(result => {
+      fingerprintId = result.visitorId;
+      checkSignals();
+    })
+    .catch(() => {
+      alert("Failed to load fingerprint.");
+    });
+
+  /* ------------------ LOAD LOCATION ------------------ */
+fetch("https://ipapi.co/json/")
+  .then(res => res.json())
+  .then(data => {
+    locationData = {
+      city: data.city,
+      region: data.region,
+      country: data.country_name,
+      latitude: data.latitude,
+      longitude: data.longitude
+    };
+    checkSignals();
+  })
+  .catch(() => {
+    // Soft fallback — no popup
+    locationData = {
+      city: "Unknown",
+      region: "",
+      country: "",
+      latitude: 0,
+      longitude: 0
+    };
+    checkSignals();
+  });
+
+
+  /* ------------------ CHECK IF SIGNALS READY ------------------ */
+  function checkSignals() {
+    if (fingerprintId && locationData) {
+      signalsReady = true;
+      btn.disabled = false;
+      btn.innerText = "Log in";
+    }
+  }
+
+  /* ------------------ LOGIN ------------------ */
+  async function loginUser() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!email || !password) {
+      alert("Enter your email and password.");
+      return;
+    }
+
+    if (!signalsReady) {
+      alert("Still collecting device signals. Try again in a moment.");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Logging in…";
+
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+        fingerprint: fingerprintId,
+        location: locationData
+      })
+    });
+
+    const data = await res.json();
+
+    btn.disabled = false;
+    btn.innerText = "Log in";
+
+    if (data.status === "mfa_required") {
+      localStorage.setItem("mfaToken", data.token);
+      window.location.href = "mfa.html";
+    } else if (data.status === "ok") {
+      localStorage.setItem("authToken", data.token);
+      window.location.href = "dashboard.html";
+    } else {
+      alert(data.message || "Login failed.");
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+/* PAGE BASE */
+body {
+    font-family: system-ui, Arial, sans-serif;
+    background: #f5f6fa;
+    margin: 0;
+    padding: 0;
+    color: #222;
+}
+
+/* HEADER */
+.cf-header {
+    background: #0033a0;
+    padding: 12px 0;
+    color: white;
+}
+
+.cf-mainbar {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+}
+
+.cf-logo {
+    height: 45px;
+}
+
+.cf-center h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+/* PAGE WRAPPER — controls size */
+.cf-wrapper {
+    max-width: 900px;
+    margin: 25px auto;
+    padding: 0 15px;
+}
+
+/* SECTION TITLES */
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 25px 0 10px;
+    border-left: 4px solid #005bbb;
+    padding-left: 10px;
+}
+
+/* SIMPLE INFO BLOCKS */
+.info-block {
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.info-value {
+    color: #555;
+}
+
+/* MFA STATUS BOX */
+.mfa-box {
+    background: #e6f7e6;
+    border-left: 4px solid #2ecc71;
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+/* TABLES */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-top: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+table th {
+    background: #e9eef5;
+    padding: 10px;
+    font-weight: 600;
+    text-align: left;
+    font-size: 14px;
+}
+
+table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* MAP */
+#map {
+    height: 300px;
+    border-radius: 6px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+/* BADGES */
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+.badge.green { background: #2ecc71; }
+.badge.yellow { background: #f1c40f; }
+.badge.red { background: #e74c3c; }
+
+
+
+/* SIMULATOR INFO CARDS  */
+
+.sim-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.sim-info-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 5px solid #0033a0;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.sim-info-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0033a0;
+    margin-bottom: 6px;
+}
+
+.sim-info-text {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.4;
+}
+
+.sim-info-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 768px) {
+    .sim-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+    .cf-mainbar {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    table th, table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+}

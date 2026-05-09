@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile – CUNYfirst</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+
+<div class="topbar">
+    <div class="topbar-left">
+        <span class="back-arrow" onclick="goBack()">
+            &#8592;
+        </span>
+        <span class="topbar-title">Profile</span>
+    </div>
+
+    <div class="topbar-right">
+        <input type="text" class="search-input" placeholder="Search in Menu">
+        <span class="topbar-icon">&#128269;</span>
+        <span class="topbar-icon">&#9776;</span>
+    </div>
+</div>
+
+<main class="profile-wrapper">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="profile-sidebar">
+    <div class="sidebar-title">Profile</div>
+
+    <div class="sidebar-item active" onclick="switchTab('personal')">Personal Details</div>
+    <div class="sidebar-item" onclick="switchTab('contact')">Contact Details</div>
+    <div class="sidebar-item" onclick="switchTab('address')">Addresses</div>
+    <div class="sidebar-item" onclick="switchTab('emergency')">Emergency Contacts</div>
+    <div class="sidebar-item" onclick="switchTab('ethnicity')">Ethnicity</div>
+    <div class="sidebar-item" onclick="switchTab('family')">Family Information</div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <section class="profile-content">
+
+    <!-- TOP TABS -->
+    <div class="profile-tabs">
+      <div class="tab active" id="tab-personal" onclick="switchTab('personal')">Personal</div>
+      <div class="tab" id="tab-contact" onclick="switchTab('contact')">Contact</div>
+      <div class="tab" id="tab-address" onclick="switchTab('address')">Address</div>
+      <div class="tab" id="tab-emergency" onclick="switchTab('emergency')">Emergency</div>
+      <div class="tab" id="tab-ethnicity" onclick="switchTab('ethnicity')">Ethnicity</div>
+      <div class="tab" id="tab-family" onclick="switchTab('family')">Family</div>
+    </div>
+
+    <!-- PERSONAL TAB -->
+    <div class="profile-card tab-content" id="content-personal">
+      <h2 class="section-header">Personal Information</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Student ID:</div>
+        <div class="info-value" id="studentId"></div>
+
+        <div class="info-label">Full Name:</div>
+        <div class="info-value" id="fullName"></div>
+
+        <div class="info-label">Date of Birth:</div>
+        <div class="info-value" id="dob"></div>
+
+        <div class="info-label">Gender:</div>
+        <div class="info-value" id="gender"></div>
+
+        <div class="info-label">SSN:</div>
+        <div class="info-value" id="ssn"></div>
+      </div>
+    </div>
+
+    <!-- CONTACT TAB -->
+    <div class="profile-card tab-content hidden" id="content-contact">
+      <h2 class="section-header">Contact Details</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Email:</div>
+        <div class="info-value" id="email"></div>
+
+        <div class="info-label">Phone:</div>
+        <div class="info-value" id="phone"></div>
+      </div>
+    </div>
+
+    <!-- ADDRESS TAB -->
+    <div class="profile-card tab-content hidden" id="content-address">
+      <h2 class="section-header">Address</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Street:</div>
+        <div class="info-value" id="addr-line1"></div>
+
+        <div class="info-label">City:</div>
+        <div class="info-value" id="addr-city"></div>
+
+        <div class="info-label">State:</div>
+        <div class="info-value" id="addr-state"></div>
+
+        <div class="info-label">ZIP:</div>
+        <div class="info-value" id="addr-zip"></div>
+      </div>
+    </div>
+
+    <!-- EMERGENCY TAB -->
+    <div class="profile-card tab-content hidden" id="content-emergency">
+      <h2 class="section-header">Emergency Contact</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Name:</div>
+        <div class="info-value" id="em-name"></div>
+
+        <div class="info-label">Relationship:</div>
+        <div class="info-value" id="em-rel"></div>
+
+        <div class="info-label">Phone:</div>
+        <div class="info-value" id="em-phone"></div>
+      </div>
+    </div>
+
+    <!-- ETHNICITY TAB -->
+    <div class="profile-card tab-content hidden" id="content-ethnicity">
+      <h2 class="section-header">Ethnicity</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Ethnicity:</div>
+        <div class="info-value" id="ethnicity"></div>
+      </div>
+    </div>
+
+    <!-- FAMILY TAB -->
+    <div class="profile-card tab-content hidden" id="content-family">
+      <h2 class="section-header">Family Information</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Parent/Guardian:</div>
+        <div class="info-value" id="fam-guardian"></div>
+
+        <div class="info-label">Relationship:</div>
+        <div class="info-value" id="fam-rel"></div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+// SWITCH TABS — FIXED VERSION
+function switchTab(tab) {
+  // Remove active from all top tabs
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+  // Remove active from all sidebar items
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+
+  // Hide all tab content
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+
+  // Activate selected top tab
+  document.getElementById(`tab-${tab}`).classList.add('active');
+
+  // Activate selected sidebar item
+  document.querySelector(`.sidebar-item[onclick="switchTab('${tab}')"]`)
+    .classList.add('active');
+
+  // Show selected content
+  document.getElementById(`content-${tab}`).classList.remove('hidden');
+}
+
+// LOAD USER PROFILE
+async function loadProfile() {
+  const token = localStorage.getItem("authToken");
+
+  const res = await fetch("/api/profile", {
+    headers: { "Authorization": "Bearer " + token }
+  });
+
+  const user = await res.json();
+
+  // PERSONAL
+  document.getElementById("studentId").textContent = user.studentId;
+  document.getElementById("fullName").textContent = `${user.firstName} ${user.lastName}`;
+  document.getElementById("dob").textContent = user.dob;
+  document.getElementById("gender").textContent = user.gender;
+  document.getElementById("ssn").textContent = user.ssn;
+  
+  // CONTACT
+  document.getElementById("email").textContent = user.email;
+  document.getElementById("phone").textContent = user.phone;
+
+  // ADDRESS
+  document.getElementById("addr-line1").textContent = user.address.line1;
+  document.getElementById("addr-city").textContent = user.address.city;
+  document.getElementById("addr-state").textContent = user.address.state;
+  document.getElementById("addr-zip").textContent = user.address.zip;
+
+  // EMERGENCY
+  document.getElementById("em-name").textContent = user.emergency.name;
+  document.getElementById("em-rel").textContent = user.emergency.relationship;
+  document.getElementById("em-phone").textContent = user.emergency.phone;
+
+  // ETHNICITY
+  document.getElementById("ethnicity").textContent = user.ethnicity;
+
+  // FAMILY
+  document.getElementById("fam-guardian").textContent = user.family.guardian;
+  document.getElementById("fam-rel").textContent = user.family.relationship;
+}
+function goBack() {
+    window.location.href = "dashboard.html";
+}
+
+loadProfile();
+</script>
+
+</body>
+</html>

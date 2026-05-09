@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Location History</title>
+
+    <link rel="stylesheet" href="location.css">
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- FingerprintJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+
+    <style>
+        .toggle-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .toggle-on {
+            background: #1aa31a;
+        }
+
+        .toggle-off {
+            background: #c62828;
+        }
+
+        .sim-box {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .sim-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 6px;
+            background: #0033a0;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .risk-legend {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .risk-legend span {
+            display: inline-block;
+            margin-right: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="cf-header">
+    <div class="cf-mainbar">
+        <img src="icons/jjlogo.png" class="cf-logo" alt="CUNY Logo">
+
+        <div class="cf-center">
+            <h2>Login Location History</h2>
+        </div>
+
+        <div class="cf-right">
+            <a href="dashboard.html" style="color:white; text-decoration:none;">Back to Dashboard</a>
+        </div>
+    </div>
+</header>
+
+<div class="cf-wrapper">
+
+    <!-- MFA Toggle -->
+    <div class="section-title">Context‑Aware MFA</div>
+    <button id="mfaToggle" class="toggle-btn">Loading...</button>
+
+    <!-- Client Signals -->
+    <div class="section-title">Client Signals</div>
+
+    <div class="info-block">
+        <span class="info-label">Device Fingerprint:</span>
+        <span class="info-value" id="fp-display">Loading...</span>
+    </div>
+
+    <div class="info-block">
+        <span class="info-label">Location:</span>
+        <span class="info-value" id="loc-display">Loading...</span>
+    </div>
+
+    <!-- Trusted Devices -->
+    <div class="section-title">Trusted Devices</div>
+    <div id="trusted-devices" class="info-block">Loading...</div>
+
+        <!-- Current RISK -->
+    <div class="section-title">Current Login Risk</div>
+    <div id="geo-risk" class="info-block" style="font-size:18px;">Checking...</div>
+
+
+     <!-- Map of world -->
+    <div class="section-title">All Login Locations</div>
+    <div id="map"></div>
+
+
+    <!-- RISK Score  -->
+    <div class="section-title">Risk Score Trend</div>
+    <canvas id="riskChart" height="120"></canvas>
+
+    <div class="risk-legend">
+        <span>🟢 Allow: &lt; 30</span>
+        <span>🟡 OTP: 30–69</span>
+        <span>🔴 Block: ≥ 70</span>
+    </div>
+
+
+   
+    <!-- SUSPICIOUS LOGIN SIMULATOR -->
+    <div class="section-title">Suspicious Login Simulator</div>
+
+<div class="sim-box">
+
+    <label>Spoofed Location</label>
+    <input id="spoofInput" type="text" placeholder="e.g. Sydney, Australia" style="width:100%; padding:10px; margin-bottom:10px;">
+
+   <div class="sim-info-grid">
+
+    <div class="sim-info-card" onclick="runSim('newDevice')">
+        <div class="sim-info-title">New Device Only</div>
+        <div class="sim-info-text">
+            Same location, random device fingerprint.<br>
+            <b>Expected:</b> OTP_REQUIRED
+        </div>
+    </div>
+
+    <div class="sim-info-card" onclick="runSim('farLocation')">
+        <div class="sim-info-title">Far Location Only</div>
+        <div class="sim-info-text">
+            Trusted device, login from 800+ km away.<br>
+            <b>Expected:</b> OTP_REQUIRED
+        </div>
+    </div>
+
+    <div class="sim-info-card" onclick="runSim('newDeviceFar')">
+        <div class="sim-info-title">New Device + Far Location</div>
+        <div class="sim-info-text">
+            Unknown device and 800+ km away.<br>
+            <b>Expected:</b> BLOCK
+        </div>
+    </div>
+
+    <div class="sim-info-card" onclick="runSim('newDeviceVeryFar')">
+        <div class="sim-info-title">New Device + Very Far</div>
+        <div class="sim-info-text">
+            Unknown device and 2000+ km away.<br>
+            <b>Expected:</b> BLOCK
+        </div>
+    </div>
+
+</div>
+
+    <div id="simResult" style="margin-top:15px; font-size:18px;"></div>
+</div>
+
+     <!-- SECURITY LOGS -->
+    <div class="section-title">Security Logs</div>
+    <table id="security-table">
+        <thead>
+            <tr>
+                <th>Attempt</th>
+                <th>Risk Score</th>
+                <th>Fingerprint Match</th>
+                <th>MFA Required</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="clearLogsBtn" class="sim-btn" style="background:#c62828; margin-top:10px;">
+    Clear Logs
+</button>
+
+    <!-- LOGIN HISTORY -->
+    <div class="section-title">Login History</div>
+    <table id="history-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>City</th>
+                <th>Region</th>
+                <th>Country</th>
+                <th>Risk</th>
+                <th>MFA</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="clearLogsBtn" class="sim-btn" style="background:#c62828; margin-top:10px;">
+    Clear Logs
+</button>
+
+<script>
+/* ---------------------- GLOBALS ---------------------- */
+const token = localStorage.getItem("authToken");
+if (!token) window.location.href = "index.html";
+
+let map;
+let signals = {
+    fingerprint: null,
+    location: null
+};
+
+/* ---------------------- MFA TOGGLE ---------------------- */
+async function loadMFAStatus() {
+    const res = await fetch("/api/user-info", {
+        headers: { "Authorization": "Bearer " + token }
+    });
+
+    const user = await res.json();
+    const btn = document.getElementById("mfaToggle");
+
+    if (user.mfaEnabled) {
+        btn.className = "toggle-btn toggle-on";
+        btn.innerText = "Context‑Aware MFA: ON";
+    } else {
+        btn.className = "toggle-btn toggle-off";
+        btn.innerText = "Context‑Aware MFA: OFF";
+    }
+
+    btn.onclick = async () => {
+        const res = await fetch("/api/toggle-mfa", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        loadMFAStatus();
+    };
+}
+
+/* ---------------------- SIMULATOR ---------------------- */
+async function simulate(type) {
+    alert("Simulator will be wired after deployment.");
+}
+
+async function geocodeCity(cityName) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(cityName)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.length) return null;
+
+    const addr = data[0].address;
+
+    const city =
+        addr.city ||
+        addr.town ||
+        addr.village ||
+        addr.municipality ||
+        cityName;
+
+    const region =
+        addr.state ||
+        addr.region ||
+        addr.province ||
+        addr.county ||
+        addr.state_district ||
+        city ||                     // fallback
+        "Unknown Region";
+
+    const country = addr.country || "Unknown Country";
+
+    return {
+        city,
+        region,
+        country,
+        latitude: parseFloat(data[0].lat),
+        longitude: parseFloat(data[0].lon)
+    };
+}
+
+
+
+function randomFingerprint() {
+    return crypto.randomUUID().replace(/-/g, "").slice(0, 32);
+}
+async function runSim(type) {
+    const city = document.getElementById("spoofInput").value.trim();
+    if (!city) {
+        alert("Enter a spoofed location first.");
+        return;
+    }
+
+    const spoofLocation = await geocodeCity(city);
+    if (!spoofLocation) {
+        alert("Location not found.");
+        return;
+    }
+
+    let spoofFingerprint;
+    let mode;
+
+    if (type === "newDevice") {
+        spoofFingerprint = randomFingerprint();
+        mode = "new";
+    }
+    if (type === "farLocation") {
+        spoofFingerprint = signals.fingerprint;
+        mode = "trusted";
+    }
+    if (type === "newDeviceFar") {
+        spoofFingerprint = randomFingerprint();
+        mode = "new";
+    }
+    if (type === "newDeviceVeryFar") {
+        spoofFingerprint = randomFingerprint();
+        mode = "new";
+    }
+
+    const res = await fetch("/api/simulate-login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            spoofLocation,
+            spoofFingerprint,
+            mode
+        })
+    });
+
+    const data = await res.json();
+
+    const box = document.getElementById("simResult");
+
+    if (data.action === "block") {
+        box.innerHTML = `<span style="color:red;">Access Blocked</span><br>Risk Score: ${data.geoScore}`;
+    } else if (data.action === "otp") {
+        box.innerHTML = `<span style="color:orange;">OTP Required</span><br>Risk Score: ${data.geoScore}`;
+    } else {
+        box.innerHTML = `<span style="color:green;">Access Allowed</span><br>Risk Score: ${data.geoScore}`;
+    }
+
+    // Refresh dashboard
+    loadHistory();
+}
+
+
+
+/* ------------------------ GET CURRENT LOCATION ------------------------ */
+async function getCurrentLocation() {
+    try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+
+        const loc = {
+            city: data.city,
+            region: data.region,
+            country: data.country_name,
+            latitude: data.latitude,
+            longitude: data.longitude
+        };
+
+        document.getElementById("loc-display").innerText =
+            `${loc.city}, ${loc.region}, ${loc.country}`;
+
+        signals.location = loc;
+        return loc;
+
+    } catch (e) {
+        // Soft fallback — no popup, no breakage
+        const fallback = {
+            city: "Unknown",
+            region: "",
+            country: "",
+            latitude: 0,
+            longitude: 0
+        };
+
+        document.getElementById("loc-display").innerText =
+            `Unknown Location`;
+
+        signals.location = fallback;
+        return fallback;
+    }
+}
+
+async function runSimulation(spoofLocation, spoofFingerprint, mode) {
+  const token = localStorage.getItem("authToken");
+
+  const res = await fetch("/api/simulate-login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({ spoofLocation, spoofFingerprint, mode })
+  });
+
+  const data = await res.json();
+
+  // Update UI
+  updateRiskDisplay(data.geoScore, data.geoRisk);
+  updateRiskChart(data.geoScore); // if chart exists
+
+  return data;
+}
+
+/* ---------------------- GET FINGERPRINT ---------------------- */
+async function getFingerprint() {
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    signals.fingerprint = result.visitorId;
+
+    document.getElementById("fp-display").innerText = result.visitorId;
+    return result.visitorId;
+}
+
+/* ---------------------- SESSION VERIFY ---------------------- */
+async function verifySession() {
+    const fingerprint = await getFingerprint();
+    const location = await getCurrentLocation();
+
+    const res = await fetch("/api/verify-session", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ fingerprint, location })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("geo-risk").innerText =
+        data.risk === "high" ? "🔴 High Risk" :
+        data.risk === "medium" ? "🟡 Medium Risk" :
+        "🟢 Normal";
+}
+
+/* ---------------------- TRUSTED DEVICES ---------------------- */
+async function loadTrustedDevices() {
+    const res = await fetch("/api/user-info", {
+        headers: { "Authorization": "Bearer " + token }
+    });
+
+    const user = await res.json();
+
+    document.getElementById("trusted-devices").innerHTML = `
+        <b>Email:</b> ${user.email}<br>
+        <b>Current Fingerprint:</b> ${signals.fingerprint}<br>
+        <b>Last Trusted Fingerprint:</b> ${user.fingerprint || "None"}<br><br>
+        <b>Last Known Location:</b><br>
+        ${user.lastLocation?.city || "-"}, ${user.lastLocation?.region || "-"}<br>
+        ${user.lastLocation?.country || "-"}<br><br>
+        <b>Last Login Risk:</b> ${user.lastRisk || "Normal"}
+    `;
+}
+
+/* ---------------------- LOGIN HISTORY ---------------------- */
+async function loadHistory() {
+    const res = await fetch("/api/login-history", {
+        headers: { "Authorization": "Bearer " + token }
+    });
+
+    const events = await res.json();
+
+    renderHistoryTable(events);
+    renderMap(events);
+    renderRiskChart(events);
+    renderSecurityLogs(events);
+}
+
+/* ---------------------- HISTORY TABLE ---------------------- */
+function renderHistoryTable(events) {
+    const tbody = document.querySelector("#history-table tbody");
+    tbody.innerHTML = "";
+
+    events.forEach(ev => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${new Date(ev.timestamp).toLocaleString()}</td>
+            <td>${ev.location?.city || "-"}</td>
+            <td>${ev.location?.region || "-"}</td>
+            <td>${ev.location?.country || "-"}</td>
+            <td>${ev.geoRisk || "Normal"}</td>
+            <td>${ev.mfaRequired ? "Yes" : "No"}</td>
+        `;
+
+        tbody.appendChild(row);
+    });
+}
+
+/* ---------------------- SECURITY LOGS ---------------------- */
+function renderSecurityLogs(events) {
+    const tbody = document.querySelector("#security-table tbody");
+    tbody.innerHTML = "";
+
+    events.forEach((ev, i) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${ev.geoScore || 0}</td>
+            <td>${ev.fpMatch ? "Yes" : "No"}</td>
+            <td>${ev.mfaRequired ? "Yes" : "No"}</td>
+        `;
+
+        tbody.appendChild(row);
+    });
+}
+
+document.getElementById("clearLogsBtn").onclick = async () => {
+    const res = await fetch("/api/clear-logs", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
+
+    const data = await res.json();
+    if (data.status === "ok") {
+        alert("Logs cleared.");
+        loadHistory();
+    }
+};
+
+
+/* ---------------------- MAP ---------------------- */
+function renderMap(events) {
+    if (map) map.remove();
+
+    map = L.map('map').setView([40.7128, -74.0060], 3);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    const bounds = [];
+
+    events.forEach(ev => {
+        if (!ev.location?.latitude) return;
+
+        const { latitude, longitude } = ev.location;
+
+        const marker = L.marker([latitude, longitude]).addTo(map);
+
+        marker.bindPopup(`
+            <b>${ev.location.city}, ${ev.location.region}</b><br>
+            ${ev.location.country}<br><br>
+            <b>Risk:</b> ${ev.geoRisk}<br>
+            <b>MFA:</b> ${ev.mfaRequired ? "Yes" : "No"}<br>
+            <b>Date:</b> ${new Date(ev.timestamp).toLocaleString()}
+        `);
+
+        bounds.push([latitude, longitude]);
+    });
+
+    if (bounds.length > 0) {
+        map.fitBounds(bounds, { padding: [40, 40] });
+    }
+}
+
+/* ---------------------- RISK CHART ---------------------- */
+function renderRiskChart(events) {
+    const ctx = document.getElementById("riskChart");
+
+    const labels = events.map((e, i) => "Attempt " + (i + 1));
+    const scores = events.map(e => e.geoScore || 0);
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels,
+            datasets: [{
+                label: "Risk Score",
+                data: scores,
+                borderColor: "#0033a0",
+                backgroundColor: "rgba(0,51,160,0.2)",
+                borderWidth: 2,
+                tension: 0.3
+            }]
+        },
+        options: {
+            scales: {
+                y: { min: 0, max: 100 }
+            }
+        }
+    });
+}
+
+/* ---------------------- INIT ---------------------- */
+(async function init() {
+    await loadMFAStatus();
+    await verifySession();
+    await loadTrustedDevices();
+    await loadHistory();
+})();
+</script>
+
+</body>
+</html>

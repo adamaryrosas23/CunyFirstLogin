@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account Settings</title>
+
+  <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+    }
+
+    .box {
+      background: white;
+      padding: 2rem;
+      max-width: 500px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #0033a0;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .info {
+      margin: 1rem 0;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      margin-top: 1rem;
+      background: #0033a0;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    .logout {
+      background: #d00;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>Account Settings</h2>
+
+    <div class="info" id="info">Loading...</div>
+
+    <button onclick="toggleMFA()">Toggle MFA</button>
+    <button class="logout" onclick="logout()">Log Out</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("authToken");
+    if (!token) window.location.href = "index.html";
+
+    async function loadInfo() {
+      const res = await fetch("/api/user-info", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      const user = await res.json();
+
+      document.getElementById("info").innerHTML = `
+        <b>Name:</b> ${user.fullName}<br>
+        <b>Email:</b> ${user.email}<br><br>
+
+        <b>Current Fingerprint:</b> ${user.currentFingerprint}<br>
+        <b>Last Trusted Fingerprint:</b> ${user.fingerprint}<br><br>
+
+        <b>Last Known Location:</b><br>
+        ${user.lastLocation?.city}, ${user.lastLocation?.region}<br>
+        ${user.lastLocation?.country}<br><br>
+
+        <b>MFA Enabled:</b> ${user.mfaEnabled ? "Yes" : "No"}
+      `;
+    }
+
+    async function toggleMFA() {
+      await fetch("/api/toggle-mfa", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      loadInfo();
+    }
+
+    function logout() {
+      localStorage.removeItem("authToken");
+      window.location.href = "index.html";
+    }
+
+    loadInfo();
+  </script>
+
+</body>
+</html>

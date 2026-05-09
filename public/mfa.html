@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MFA Verification</title>
+
+  <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mfa-box {
+      background: #fff;
+      width: 360px;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+
+    .mfa-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #0033a0;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 18px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      letter-spacing: 6px;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #0033a0;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      background: #0033a0;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 17px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #002070;
+    }
+
+    .note {
+      margin-top: 1rem;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.4;
+    }
+
+    .error {
+      color: #d00;
+      font-size: 14px;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="mfa-box">
+    <div class="mfa-title">Verify Your Identity</div>
+  <div class="subtitle">Enter the 6‑digit code sent to your WhatsApp</div>
+
+
+    <input id="otp" type="text" maxlength="6" placeholder="••••••" autocomplete="one-time-code">
+
+    <button id="verifyBtn" onclick="verifyMFA()">Verify Code</button>
+    <button id="resendBtn" onclick="resendCode()" style="margin-top:10px; background:#777;">
+  Resend Code
+</button>
+
+
+    <div id="error" class="error"></div>
+
+    <div class="note">
+      Context‑Aware MFA is enabled.<br>
+      Your device fingerprint & location will be checked.
+    </div>
+  </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+
+<script>
+let fingerprintId = null;
+let locationData = null;
+let signalsReady = false;
+
+const btn = document.getElementById("verifyBtn");
+const msg = document.getElementById("error");
+
+// Disable button until signals load
+btn.disabled = true;
+btn.innerText = "Loading signals…";
+
+/* ------------------ LOAD FINGERPRINT ------------------ */
+FingerprintJS.load()
+  .then(fp => fp.get())
+  .then(result => {
+    fingerprintId = result.visitorId;
+    checkSignals();
+  })
+  .catch(() => {
+    msg.innerText = "Failed to load fingerprint.";
+  });
+
+/* ------------------ LOAD LOCATION ------------------ */
+async function loadBrowserLocationFallback() {
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        resolve({
+          city: "Unknown",
+          region: "",
+          country: "",
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
+        });
+      },
+      () => resolve(null)
+    );
+  });
+}
+
+fetch("https://ipapi.co/json/")
+  .then(res => res.json())
+  .then(data => {
+    locationData = {
+      city: data.city,
+      region: data.region,
+      country: data.country_name,
+      latitude: data.latitude,
+      longitude: data.longitude
+    };
+    checkSignals();
+  })
+  .catch(async () => {
+    // fallback to browser GPS
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        locationData = {
+          city: "Unknown",
+          region: "",
+          country: "",
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
+        };
+        checkSignals();
+      },
+      () => {
+        msg.innerText = "Failed to load location.";
+      }
+    );
+  });
+
+
+/* ------------------ CHECK IF SIGNALS READY ------------------ */
+function checkSignals() {
+  if (fingerprintId && locationData) {
+    signalsReady = true;
+    btn.disabled = false;
+    btn.innerText = "Verify Code";
+    msg.innerText = "";
+  }
+}
+
+/* ------------------ VERIFY OTP ------------------ */
+async function verifyMFA() {
+  const code = document.getElementById("otp").value.trim();
+  const token = localStorage.getItem("mfaToken");
+
+  msg.innerText = "";
+
+  if (!code) {
+    msg.innerText = "Enter the verification code.";
+    return;
+  }
+
+  if (!signalsReady) {
+    msg.innerText = "Still collecting device signals… using fallback.";
+    signalsReady = true; // force-enable
+}
+
+  btn.disabled = true;
+  btn.innerText = "Verifying…";
+
+  const res = await fetch("/api/mfa-verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      token,
+      code,
+      fingerprint: fingerprintId,
+      location: locationData
+    })
+  });
+
+  const data = await res.json();
+
+  btn.disabled = false;
+  btn.innerText = "Verify Code";
+
+  if (data.status === "ok") {
+    localStorage.setItem("authToken", data.token);
+    msg.style.color = "green";
+    msg.innerText = "Verification successful! Redirecting…";
+    setTimeout(() => window.location.href = "dashboard.html", 1200);
+  } else {
+    msg.style.color = "#d00";
+    msg.innerText = data.message || "Invalid code.";
+  }
+}
+
+/* ------------------ RESEND OTP ------------------ */
+async function resendCode() {
+  const token = localStorage.getItem("mfaToken");
+  const resendBtn = document.getElementById("resendBtn");
+
+  resendBtn.disabled = true;
+  resendBtn.innerText = "Sending…";
+
+  const res = await fetch("/api/resend-otp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token })
+  });
+
+  const data = await res.json();
+
+  if (data.status === "ok") {
+    msg.style.color = "green";
+    msg.innerText = "A new code has been sent to your phone.";
+
+    let timeLeft = 30;
+    const interval = setInterval(() => {
+      resendBtn.innerText = `Resend Code (${timeLeft})`;
+      timeLeft--;
+
+      if (timeLeft < 0) {
+        clearInterval(interval);
+        resendBtn.disabled = false;
+        resendBtn.innerText = "Resend Code";
+      }
+    }, 1000);
+
+  } else {
+    msg.style.color = "#d00";
+    msg.innerText = data.message || "Failed to resend code.";
+    resendBtn.disabled = false;
+    resendBtn.innerText = "Resend Code";
+  }
+}
+</script>
+
+
+
+
+</body>
+</html>

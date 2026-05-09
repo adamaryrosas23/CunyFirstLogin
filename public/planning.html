@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Planning – CUNYfirst</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+
+<!-- ===== TOP BLUE BAR ===== -->
+<div class="topbar">
+    <div class="topbar-left">
+        <span class="back-arrow" onclick="goBack()">&#8592;</span>
+        <span class="topbar-title">Course Planning</span>
+    </div>
+
+    <div class="topbar-right">
+        <input type="text" class="search-input" placeholder="Search in Menu">
+        <span class="topbar-icon">&#128269;</span>
+        <span class="topbar-icon">&#9776;</span>
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="profile-wrapper">
+
+  <section class="profile-content">
+
+    <div class="profile-card">
+      <h2 class="section-header">Planning Tools</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Degree Progress:</div>
+        <div class="info-value">65% Completed</div>
+
+        <div class="info-label">Credits Earned:</div>
+        <div class="info-value">82</div>
+
+        <div class="info-label">Credits Remaining:</div>
+        <div class="info-value">28</div>
+
+        <div class="info-label">Suggested Next Courses:</div>
+        <div class="info-value">MAT 152, CSCI 272, ENG 201</div>
+      </div>
+
+      <h2 class="section-header">Actions</h2>
+
+      <button class="cf-button" onclick="openPage('schedule.html')">Open Schedule Builder</button>
+      <button class="cf-button" onclick="openPage('degreeworks.html')">View DegreeWorks</button>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+function goBack() {
+  window.location.href = "dashboard.html";
+}
+
+function openPage(url) {
+  window.location.href = url;
+}
+</script>
+
+</body>
+</html>

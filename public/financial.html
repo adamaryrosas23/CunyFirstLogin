@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+
+<!-- ===== TOP BLUE BAR ===== -->
+<div class="topbar">
+    <div class="topbar-left">
+        <span class="back-arrow" onclick="goBack()">&#8592;</span>
+        <span class="topbar-title">Make a Payment</span>
+    </div>
+
+    <div class="topbar-right">
+        <input type="text" class="search-input" placeholder="Search in Menu">
+        <span class="topbar-icon">&#128269;</span>
+        <span class="topbar-icon">&#9776;</span>
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="profile-wrapper">
+
+  <section class="profile-content">
+
+    <div class="profile-card">
+
+      <h2 class="section-header">Payment Details</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Current Balance:</div>
+        <div class="info-value">$325.00</div>
+
+        <div class="info-label">Due Date:</div>
+        <div class="info-value">May 20, 2026</div>
+
+        <div class="info-label">Payment Status:</div>
+        <div class="info-value">Pending</div>
+      </div>
+
+      <h2 class="section-header">Enter Payment Amount</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Amount to Pay:</div>
+        <input type="number" id="paymentAmount" class="input-field" placeholder="Enter amount">
+      </div>
+
+      <h2 class="section-header">Payment Method</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Select Method:</div>
+        <select id="paymentMethod" class="input-field">
+          <option value="card">Credit/Debit Card</option>
+          <option value="bank">Bank Account (ACH)</option>
+        </select>
+      </div>
+
+      <button class="cf-button" onclick="submitPayment()">Submit Payment</button>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+function goBack() {
+  window.location.href = "dashboard.html";
+}
+
+function submitPayment() {
+  const amount = document.getElementById("paymentAmount").value;
+  const method = document.getElementById("paymentMethod").value;
+
+  if (!amount || amount <= 0) {
+    alert("Please enter a valid payment amount.");
+    return;
+  }
+
+  alert("Payment of $" + amount + " submitted using " + method.toUpperCase() + ".");
+}
+</script>
+
+</body>
+</html>

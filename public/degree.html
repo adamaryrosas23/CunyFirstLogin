@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DegreeWorks – CUNYfirst</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+
+<!-- ===== TOP BLUE BAR ===== -->
+<div class="topbar">
+    <div class="topbar-left">
+        <span class="back-arrow" onclick="goBack()">&#8592;</span>
+        <span class="topbar-title">DegreeWorks</span>
+    </div>
+
+    <div class="topbar-right">
+        <input type="text" class="search-input" placeholder="Search in Menu">
+        <span class="topbar-icon">&#128269;</span>
+        <span class="topbar-icon">&#9776;</span>
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="profile-wrapper">
+
+  <section class="profile-content">
+
+    <!-- DEGREE SUMMARY -->
+    <div class="profile-card">
+      <h2 class="section-header">Degree Progress Summary</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Program:</div>
+        <div class="info-value">B.S. Computer Science</div>
+
+        <div class="info-label">Catalog Year:</div>
+        <div class="info-value">2025</div>
+
+        <div class="info-label">Credits Required:</div>
+        <div class="info-value">120</div>
+
+        <div class="info-label">Credits Completed:</div>
+        <div class="info-value">42</div>
+
+        <div class="info-label">Credits Remaining:</div>
+        <div class="info-value">78</div>
+
+        <div class="info-label">Overall Progress:</div>
+        <div class="info-value">35%</div>
+      </div>
+
+      <h2 class="section-header">Completed Requirements</h2>
+
+      <table class="cf-table">
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Status</th>
+            <th>Credits</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>English Composition</td>
+            <td>Completed</td>
+            <td>6</td>
+          </tr>
+
+          <tr>
+            <td>Mathematics Requirement</td>
+            <td>Completed</td>
+            <td>3</td>
+          </tr>
+
+          <tr>
+            <td>General Education – World Cultures</td>
+            <td>Completed</td>
+            <td>3</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 class="section-header">Remaining Requirements</h2>
+
+      <table class="cf-table">
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Status</th>
+            <th>Credits</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Major Core Courses</td>
+            <td>In Progress</td>
+            <td>36</td>
+          </tr>
+
+          <tr>
+            <td>Major Electives</td>
+            <td>Not Started</td>
+            <td>12</td>
+          </tr>
+
+          <tr>
+            <td>General Education – Scientific World</td>
+            <td>Not Started</td>
+            <td>3</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+function goBack() {
+  window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>

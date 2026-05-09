@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CUNYfirst Student Center</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<header class="cf-header">
+
+  <!-- BLUE Header -->
+  <div class="cf-mainbar">
+
+    <div class="cf-left">
+      <img src="icons/jjlogo.png" class="cf-logo" alt="CUNY Logo">
+    </div>
+
+    <div class="cf-center">
+      <div class="cf-menu-group">
+        <img src="icons/fav.png" class="cf-icon" alt="Favorites">
+        <img src="icons/list.png" class="cf-icon" alt="Menu List">
+        <div class="cf-menu-dropdown">Menu ▾</div>
+      </div>
+
+      <input type="text" class="cf-search" placeholder="Search in Menu">
+    </div>
+
+    <div class="cf-right">
+      <img src="icons/home.png" class="cf-icon" alt="Home">
+      <img src="icons/alarm.png" class="cf-icon" alt="Notifications">
+      <div class="cf-action-menu">
+  <img src="icons/action.png" class="cf-icon" alt="Actions" onclick="toggleActionMenu()">
+
+  <div id="actionDropdown" class="cf-dropdown">
+    <div class="cf-dropdown-item" onclick="signOut()">Sign Out</div>
+  </div>
+</div>
+
+      <img src="icons/nav.png" class="cf-icon" alt="Navigation">
+    </div>
+
+  </div>
+
+  <!--  TITLE BAR -->
+  <div class="cf-pagebar">
+    <div class="cf-page-dropdown">Student Center ▾</div>
+    <div class="cf-page-nav">2 of 2</div>
+  </div>
+
+</header>
+
+<!-- WRAPPER -->
+<main class="cf-wrapper">
+
+  <!-- GRID with icons -->
+  <div class="cf-grid">
+
+    <div class="cf-card">
+      <img src="icons/FAFSA.jpg" class="cf-banner-img" alt="FAFSA Banner">
+    </div>
+
+    <div class="cf-card" onclick="openPage('profile.html')">
+      <div class="cf-card-title">Profile</div>
+      <img src="icons/personal.png" class="cf-card-icon-img" alt="Profile Icon">
+      <div class="cf-card-sub">25890245</div>
+    </div>
+
+    <div class="cf-card" onclick="openPage('holds.html')">
+      <div class="cf-card-title">Tasks and Holds</div>
+      <img src="icons/alerts.png" class="cf-card-icon-img" alt="Alerts Icon">
+      <div class="cf-card-sub">5 To Dos • 1 Hold</div>
+    </div>
+
+    <div class="cf-card" onclick="openPage('tool.html')">
+      <div class="cf-card-title">Student Tools</div>
+      <img src="icons/tool.png" class="cf-card-icon-img" alt="Tools Icon">
+    </div>
+
+    <div class="cf-card" onclick="openPage('schedule.html')">
+      <div class="cf-card-title">Schedule Builder</div>
+      <img src="icons/class.png" class="cf-card-icon-img" alt="Class Icon">
+    </div>
+
+    <div class="cf-card" onclick="openPage('planning.html')">
+      <div class="cf-card-title">Course Planning & Enrollment</div>
+      <img src="icons/schedule.png" class="cf-card-icon-img" alt="Schedule Icon">
+    </div>
+
+    <div class="cf-card" onclick="openPage('degree.html')">
+      <div class="cf-card-title">DegreeWorks & FACTS</div>
+      <img src="icons/degree.png" class="cf-card-icon-img" alt="Degree Icon">
+    </div>
+
+    <div class="cf-card" onclick="openPage('financial.html')">
+      <div class="cf-card-title">Financial Account</div>
+      <img src="icons/balance.png" class="cf-card-icon-img" alt="Balance Icon">
+      <div class="cf-card-sub">Payment Due</div>
+    </div>
+
+    <div class="cf-card" onclick="openPage('aid.html')">
+      <div class="cf-card-title">Financial Aid</div>
+      <img src="icons/Tuition.png" class="cf-card-icon-img" alt="Tuition Icon">
+    </div>
+
+    <div class="cf-card" onclick="openPage('direct.html')">
+      <div class="cf-card-title">CUNY Direct Deposit</div>
+      <img src="icons/direct.png" class="cf-card-icon-img" alt="Direct Deposit Icon">
+    </div>
+
+    <div class="cf-card" onclick="openPage('transcript.html')">
+      <div class="cf-card-title">Graduation & Transcript</div>
+      <img src="icons/summary.png" class="cf-card-icon-img" alt="Transcript Icon">
+    </div>
+
+   <div class="cf-card" onclick="openPage('https://brightspace.cuny.edu')">
+      <div class="cf-card-title">Brightspace</div>
+      <img src="icons/brightspace.png" class="cf-card-icon-img" alt="Brightspace Icon">
+    </div>
+
+    <div class="cf-card" onclick="openPage('https://explorer.cuny.edu')">
+      <div class="cf-card-title">Transfer Explorer</div>
+      <img src="icons/trex.png" class="cf-card-icon-img" alt="Transfer Explorer Icon">
+    </div>
+
+    <div class="cf-card" onclick="openPage('https://www.cuny.edu/about/administration/offices/registrar/nsc-myhub/')">
+      <div class="cf-card-title">My Hub NSC</div>
+      <img src="icons/hub.png" class="cf-card-icon-img" alt="Hub Icon">
+    </div>
+
+    <div class="cf-card" onclick="openPage('location.html')">
+      <div class="cf-card-title">View Login Location</div>
+      <img src="icons/geo.png" class="cf-card-icon-img" alt="Map Icon">
+    </div>
+
+
+  </div>
+</main>
+
+<!-- Fingerprint + Session Verification -->
+<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+
+<script>
+async function verifySession() {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    alert("No session token — logging out.");
+    return window.location.href = "index.html";
+  }
+
+  // Get fingerprint
+  const fp = await FingerprintJS.load();
+  const result = await fp.get();
+  const fingerprint = result.visitorId;
+
+  // Get location with fallback
+  let location;
+  try {
+    const locRes = await fetch("https://ipapi.co/json/");
+    const loc = await locRes.json();
+    location = {
+      city: loc.city,
+      region: loc.region,
+      country: loc.country_name,
+      latitude: loc.latitude,
+      longitude: loc.longitude
+    };
+  } catch (e) {
+    location = {
+      city: "Unknown",
+      region: "",
+      country: "",
+      latitude: 0,
+      longitude: 0
+    };
+  }
+
+  // Verify session
+  const res = await fetch("/api/verify-session", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({ fingerprint, location })
+  });
+
+  const data = await res.json();
+
+  if (!data.valid) {
+    alert("Session invalid — logging out.");
+    localStorage.removeItem("authToken");
+    window.location.href = "index.html";
+  }
+}
+
+
+// Run session 
+verifySession();
+
+function openPage(url) {
+  window.location.href = url;
+}
+
+function toggleActionMenu() {
+  const menu = document.getElementById("actionDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+function signOut() {
+  localStorage.removeItem("authToken");
+  window.location.href = "index.html";
+}
+document.addEventListener("click", function(event) {
+  const menu = document.getElementById("actionDropdown");
+  const icon = document.querySelector(".cf-action-menu img");
+
+  if (!menu.contains(event.target) && !icon.contains(event.target)) {
+    menu.style.display = "none";
+  }
+});
+
+
+
+
+
+</script>
+
+</body>
+</html>

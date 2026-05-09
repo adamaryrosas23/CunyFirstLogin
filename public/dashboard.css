@@ -1,0 +1,224 @@
+/* GLOBAL */
+body {
+  background: #f5f4f2;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* HEADER */
+/* MAIN BLUE BAR */
+.cf-mainbar {
+  background: #0033a0;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* LOGO */
+.cf-logo {
+  height: 42px;
+  width: auto;
+}
+
+/* CENTER */
+.cf-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.cf-menu-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cf-menu-dropdown {
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* SEARCH */
+.cf-search {
+  width: 260px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+/* RIGHT ICONS */
+.cf-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.cf-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* PAGE BAR */
+.cf-pagebar {
+  background: #e6e6e6;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cf-page-dropdown {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.cf-page-nav {
+  font-size: 14px;
+  color: #444;
+}
+
+
+
+
+
+/* WRAPPER */
+.cf-wrapper {
+  max-width: 1200px;
+  margin: 24px auto 40px;
+  padding: 0 20px;
+  bckground: transparent;
+}
+
+/* BANNER */
+.cf-banner {
+  background: white;
+  border-left: 6px solid #0033a0;
+  padding: 22px 28px;
+  border-radius: 6px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.12);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.cf-banner-left {
+  max-width: 60%;
+}
+
+.cf-banner-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.cf-banner-img {
+  max-height: 100px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* GRID */
+.cf-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+/* CARD — centered, square, pixel-perfect */
+.cf-card {
+  background: white;
+  padding: 12px;
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;      
+  justify-content: center;  
+  text-align: center;
+
+  aspect-ratio: 2.5 / 1;    /* square-ish like CUNYfirst */
+}
+
+/* ICON — exact CUNYfirst size */
+.cf-card-icon-img {
+  width: 68px;              /* bigger icon */
+  height: 68px;
+  margin-bottom: 16px;
+  object-fit: contain;
+  display: block;
+}
+
+
+/* TEXT */
+.cf-card-title {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.cf-card-sub {
+  font-size: 13px;
+  color: #555;
+}
+
+
+
+.cf-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+
+
+.cf-back-arrow {
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  margin-right: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.cf-back-arrow:hover {
+  background: rgba(255,255,255,0.2);
+}
+.cf-action-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.cf-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 140px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 999;
+}
+
+.cf-dropdown-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.cf-dropdown-item:hover {
+  background: #f0f0f0;
+}

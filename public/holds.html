@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Holds – CUNYfirst</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+
+<!-- ===== TOP BLUE BAR ===== -->
+<div class="topbar">
+    <div class="topbar-left">
+        <span class="back-arrow" onclick="goBack()">&#8592;</span>
+        <span class="topbar-title">Holds</span>
+    </div>
+
+    <div class="topbar-right">
+        <input type="text" class="search-input" placeholder="Search in Menu">
+        <span class="topbar-icon">&#128269;</span>
+        <span class="topbar-icon">&#9776;</span>
+    </div>
+</div>
+
+<!-- ===== MAIN WRAPPER ===== -->
+<main class="profile-wrapper">
+
+  <!-- ===== LEFT SIDEBAR (MATCHES PROFILE EXACTLY) ===== -->
+  <aside class="profile-sidebar">
+    <div class="sidebar-title">Holds</div>
+
+    <div class="sidebar-item active" onclick="switchHoldTab('active')">Active Holds</div>
+    <div class="sidebar-item" onclick="switchHoldTab('cleared')">Cleared Holds</div>
+  </aside>
+
+  <!-- ===== RIGHT CONTENT AREA ===== -->
+  <section class="profile-content">
+
+    <!-- ACTIVE HOLDS -->
+    <div class="profile-card hold-content" id="hold-active">
+      <h2 class="section-header">Active Holds</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Hold Type:</div>
+        <div class="info-value">Bursar Hold</div>
+
+        <div class="info-label">Reason:</div>
+        <div class="info-value">Outstanding Balance</div>
+
+        <div class="info-label">Amount Due:</div>
+        <div class="info-value">$325.00</div>
+
+        <div class="info-label">Impact:</div>
+        <div class="info-value">Registration Block</div>
+      </div>
+    </div>
+
+    <!-- CLEARED HOLDS -->
+    <div class="profile-card hold-content hidden" id="hold-cleared">
+      <h2 class="section-header">Cleared Holds</h2>
+
+      <div class="info-grid">
+        <div class="info-label">Hold Type:</div>
+        <div class="info-value">Immunization Hold</div>
+
+        <div class="info-label">Cleared On:</div>
+        <div class="info-value">March 10, 2026</div>
+
+        <div class="info-label">Impact:</div>
+        <div class="info-value">None</div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+function goBack() {
+    window.location.href = "dashboard.html";
+}
+
+// SWITCH HOLD TABS (MATCHES PROFILE SWITCHING)
+function switchHoldTab(tab) {
+  // Remove active from all sidebar items
+  document.querySelectorAll('.profile-sidebar .sidebar-item')
+    .forEach(i => i.classList.remove('active'));
+
+  // Add active to selected
+  document.querySelector(`.sidebar-item[onclick="switchHoldTab('${tab}')"]`)
+    .classList.add('active');
+
+  // Hide all hold content
+  document.querySelectorAll('.hold-content')
+    .forEach(c => c.classList.add('hidden'));
+
+  // Show selected content
+  document.getElementById(`hold-${tab}`).classList.remove('hidden');
+}
+</script>
+
+</body>
+</html>

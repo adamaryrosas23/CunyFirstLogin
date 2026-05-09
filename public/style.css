@@ -1,0 +1,230 @@
+/* GLOBAL */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f7f4eb;
+  color: #111;
+}
+
+
+a {
+  color: #0033a0;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* HEADER */
+.cuny-header {
+  background: #0033a0;
+  color: white;
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.cuny-logo-img {
+  height: 38px;   /* perfect match to the screenshot proportions */
+  width: auto;
+  display: block;
+}
+
+.cuny-title {
+  font-size: 22px;
+  font-weight: bold;
+}
+/* TOP NAV BAR */
+.jj-header {
+  background: #0033a0;
+  color: white;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.jj-logo {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.jj-search input {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  width: 220px;
+}
+
+
+/* LOGIN BOX */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 80px 25px;
+}
+
+.login-box {
+  background: white;
+  width: 400px;
+  padding: 28px 24px;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+  margin: 0 auto;
+}
+
+.login-heading {
+  margin-top: 0;
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #0033a0;
+}
+
+/* FORM FIELDS */
+.field-label {
+  display: block;
+  font-size: 12px;       /* exact CUNYfirst size */
+  font-weight: bold;
+  margin-bottom: 3px;    /* tight spacing */
+  color: #000;
+}
+
+.field-input {
+  width: 100%;
+  box-sizing: border-box;   /* prevents overflow */
+  padding: 6px 8px;        /* exact CUNYfirst padding */
+  font-size: 13px;          /* slightly larger than label */
+  border: 1px solid #bfbfbf;
+  border-radius: 3px;
+  margin-bottom: 12px;      /* exact spacing between fields */
+}
+
+.field-input:focus {
+  border-color: #0033a0;
+  outline: none;
+}
+
+/* LOGIN BUTTON */
+.login-btn {
+  width: 100%;
+  padding: 8px 0;
+  background: #0033a0;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background: #002676;
+}
+
+/* SECURITY NOTE */
+.security-note {
+  font-size: 13px;
+  margin-top: 15px;
+  color: #555;
+}
+
+/* SECTION TITLES */
+.section-title {
+  margin-top: 25px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #0033a0;
+}
+
+/* LINK GROUPS */
+.link-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  gap: 14px;
+}
+
+/* FOOTER */
+.cuny-footer {
+  background: #0033a0;
+  color: white;
+  padding: 25px 30px;
+  display: flex;
+  justify-content: space-between; /* left + center + right */
+  align-items: center;
+  margin-top: auto; /* keeps footer at bottom */
+  box-sizing: border-box;
+}
+
+/* FOOTER LEFT LINKS */
+.footer-links {
+  display: flex;
+  gap: 18px;
+}
+.footer-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+}
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+/* FOOTER CENTER TEXT */
+.footer-copy {
+  font-size: 14px;
+}
+
+/* FOOTER RIGHT ICONS (move with page + stay on right side) */
+.footer-social {
+  display: flex;
+  gap: 18px;
+  justify-content: flex-end;
+}
+
+.footer-social i {
+  font-size: 22px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.footer-social i:hover {
+  opacity: 0.7;
+}
+
+
+/* BOX AROUND ACCOUNT MANAGEMENT */
+
+.account-box {
+  width: 100%;
+  max-width: 360px;
+  margin: 22px auto 0;
+  background: #fafafa;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  padding: 18px 20px;
+  text-align: center;
+  font-size: 11px;
+}
+
+/* BLACK TITLE */
+.black-title {
+  color: #000;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* CENTER LINKS */
+.center-links {
+  justify-content: center;
+  gap: 15px;
+}
+
+
+
+
+

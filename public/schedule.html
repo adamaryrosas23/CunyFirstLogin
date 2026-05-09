@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule Builder – CUNYfirst</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="profile.css">
+
+  <style>
+    /* ===== WEEK HEADER ===== */
+    .week-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 10px 5px;
+    }
+
+    .week-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .week-arrow {
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: #e6e6e6;
+    }
+
+    .week-arrow:hover {
+      background: #d4d4d4;
+    }
+
+    .week-tools {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tool-btn {
+      padding: 6px 12px;
+      background: #0C3C78;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .tool-btn:hover {
+      background: #0a2f5c;
+    }
+
+    /* ===== GRID LAYOUT ===== */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: 80px repeat(5, 1fr);
+      grid-auto-rows: 60px;
+      border: 1px solid #ccc;
+      background: white;
+      position: relative;
+    }
+
+    /* Visible grid lines for ALL cells */
+    .schedule-grid > div {
+      border: 1px solid #e0e0e0;
+    }
+
+    .grid-header {
+      background: #f0f0f0;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .time-slot {
+      font-size: 12px;
+      padding: 5px;
+      color: #555;
+      background: #fafafa;
+    }
+
+    .empty-cell {
+      background: white;
+    }
+
+    /* ===== CLASS BLOCKS ===== */
+    .class-block {
+      background: #cce0ff;
+      border-left: 4px solid #0C3C78;
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      z-index: 10;
+    }
+
+    .class-green {
+      background: #d9f5d9;
+      border-left: 4px solid #2e8b57;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ===== TOP BLUE BAR ===== -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="back-arrow" onclick="goBack()">&#8592;</span>
+    <span class="topbar-title">Schedule Builder</span>
+  </div>
+
+  <div class="topbar-right">
+    <input type="text" class="search-input" placeholder="Search in Menu">
+    <span class="topbar-icon">&#128269;</span>
+    <span class="topbar-icon">&#9776;</span>
+  </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="profile-wrapper">
+
+  <section class="profile-content">
+
+    <!-- WEEK HEADER -->
+    <div class="week-header">
+      <div class="week-nav">
+        <span class="week-arrow">&#8592;</span>
+        Week of Aug 30 – Sep 5, 2026
+        <span class="week-arrow">&#8594;</span>
+      </div>
+
+      <div class="week-tools">
+        <div class="tool-btn">Sort</div>
+        <div class="tool-btn">Filter</div>
+        <div class="tool-btn">RESULT 15 OF 25</div>
+      </div>
+    </div>
+
+    <!-- WEEKLY GRID -->
+    <div class="schedule-grid">
+
+      <!-- HEADER ROW -->
+      <div></div>
+      <div class="grid-header">Mon<br>Aug 31</div>
+      <div class="grid-header">Tue<br>Sep 1</div>
+      <div class="grid-header">Wed<br>Sep 2</div>
+      <div class="grid-header">Thu<br>Sep 3</div>
+      <div class="grid-header">Fri<br>Sep 4</div>
+
+      <!-- TIME ROWS (9 AM – 6 PM) -->
+      <!-- Each row: 1 time slot + 5 empty cells -->
+      <script>
+        const times = ["9:00","10:00","11:00","12:00","1:00","2:00","3:00","4:00","5:00","6:00"];
+        times.forEach(t => {
+          document.write(`<div class="time-slot">${t}</div>`);
+          for (let i = 0; i < 5; i++) {
+            document.write(`<div class="empty-cell"></div>`);
+          }
+        });
+      </script>
+
+      <!-- ===== CLASS BLOCKS (ALL CLASSES) ===== -->
+
+      <!-- MAT 151 LEC — Tue & Thu 12:00–1:15 -->
+      <div class="class-block" style="grid-column: 3; grid-row: 5 / span 2;">
+        MAT 151 LEC<br>12:00–1:15 PM
+      </div>
+
+      <div class="class-block" style="grid-column: 5; grid-row: 5 / span 2;">
+        MAT 151 LEC<br>12:00–1:15 PM
+      </div>
+
+      <!-- CSCI 411 LEC — Tue & Thu 3:00–4:15 -->
+      <div class="class-block class-green" style="grid-column: 3; grid-row: 8 / span 2;">
+        CSCI 411 LEC<br>3:00–4:15 PM<br>NB 6.67
+      </div>
+
+      <div class="class-block class-green" style="grid-column: 5; grid-row: 8 / span 2;">
+        CSCI 411 LEC<br>3:00–4:15 PM<br>NB 6.67
+      </div>
+
+      <!-- CSE 414 LEC — Mon 4:30–5:45 -->
+      <div class="class-block" style="grid-column: 2; grid-row: 9 / span 2;">
+        CSE 414 LEC<br>4:30–5:45 PM<br>NB 6&7
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+function goBack() {
+  window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>
