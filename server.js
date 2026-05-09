@@ -339,13 +339,15 @@ app.post("/api/send-reset-code", async (req, res) => {
     resetCodes[email] = code;
     
     // SEND EMAIL
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
+   const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
     await transporter.sendMail({
         from: process.env.EMAIL_USER,
