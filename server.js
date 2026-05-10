@@ -8,8 +8,13 @@ const cors = require("cors");
 const nodemailer = require("nodemailer");
 const Users = require("./models/User");
 require("dotenv").config();
+require("dns").setDefaultResultOrder("ipv4first");
+
 
 const twilio = require("twilio")(process.env.TWILIO_SID, process.env.TWILIO_AUTH);
+require("dns").lookup("smtp.gmail.com", (err, address, family) => {
+    console.log("DNS check →", { address, family });
+});
 
 // ---------------------- APP SETUP ----------------------
 const app = express();
@@ -130,12 +135,16 @@ function sendOtpWhatsApp(to, otp) {
 }
 
 const mailer = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    family: 4
 });
+
 
 function sendOtpEmail(to, otp) {
     return mailer.sendMail({
@@ -346,7 +355,8 @@ app.post("/api/send-reset-code", async (req, res) => {
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  family: 4
 });
 
     await transporter.sendMail({
